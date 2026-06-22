@@ -1,4 +1,4 @@
-# Kinsco Game
+# Kinsco Create
 
 A pop-up bakery's web game where customers build a custom cookie and publish it to a public gallery.
 
