@@ -31,3 +31,7 @@ _Avoid_: Feed, showcase
 **Pattern**:
 A property unique to Mix-in Components describing how its tinted Icon repeats or distributes across the cookie (e.g. flecks, swirl).
 _Avoid_: Style, texture, design
+
+**Restart Cookie**:
+A confirmed, destructive action during the build flow that clears every choice made so far and returns the player to the Base step.
+_Avoid_: Reset, clear, undo
