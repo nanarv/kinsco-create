@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { describe, expect, it } from 'vitest'
 import type { Cookie } from '../types'
+import { createFakeClient } from './testHelpers/fakeSupabaseClient'
 import { fetchCookies, submitCookie } from './cookieRepository'
 
 const cookie: Cookie = {
@@ -13,22 +14,6 @@ const cookie: Cookie = {
   ],
   topping: { iconId: 'drizzle', customName: null, color: '#ffffff' },
   createdAt: '2026-01-01T00:00:00Z',
-}
-
-function createFakeClient(options: { rows?: unknown[] } = {}) {
-  const calls: { table: string; payload: unknown }[] = []
-  const client = {
-    from(table: string) {
-      return {
-        insert: async (payload: unknown) => {
-          calls.push({ table, payload })
-          return { error: null }
-        },
-        select: async () => ({ data: options.rows ?? [], error: null }),
-      }
-    },
-  }
-  return { client: client as unknown as SupabaseClient, calls }
 }
 
 describe('submitCookie', () => {
