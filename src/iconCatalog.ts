@@ -23,6 +23,13 @@ export const iconCatalog: IconCatalogEntry[] = [
     defaultColor: '#5b3a29',
     assetPath: '/icons/mix-in/chocolate-chips.svg',
   },
+  {
+    id: 'drizzle',
+    category: 'topping',
+    label: 'Drizzle',
+    defaultColor: '#ffffff',
+    assetPath: '/icons/topping/drizzle.svg',
+  },
 ]
 
 const fallbackIconsByCategory: Record<ComponentCategory, IconCatalogEntry> = {
