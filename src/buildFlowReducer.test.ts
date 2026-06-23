@@ -50,6 +50,43 @@ describe('buildFlowReducer', () => {
     expect(updated.base.iconId).toBe('other-base-preset')
   })
 
+  it('lets a player override the Topping default by picking a different preset', () => {
+    const state = initialBuildFlowState()
+
+    const updated = buildFlowReducer(state, { type: 'SELECT_TOPPING_PRESET', iconId: 'other-topping-preset' })
+
+    expect(updated.topping.iconId).toBe('other-topping-preset')
+  })
+
+  it('lets a player override the Shape default by picking a different option', () => {
+    let state = initialBuildFlowState()
+    state = buildFlowReducer(state, { type: 'NEXT_STEP' }) // mixIns
+    state = buildFlowReducer(state, { type: 'NEXT_STEP' }) // topping
+    state = buildFlowReducer(state, { type: 'NEXT_STEP' }) // shape
+
+    const updated = buildFlowReducer(state, { type: 'SELECT_SHAPE', shapeId: 'heart' })
+
+    expect(updated.shape).toBe('heart')
+  })
+
+  it('lets a player type a custom Base name, clearing any preset selection', () => {
+    const state = initialBuildFlowState()
+
+    const updated = buildFlowReducer(state, { type: 'SET_BASE_CUSTOM_NAME', name: 'Matcha Dream' })
+
+    expect(updated.base.customName).toBe('Matcha Dream')
+    expect(updated.base.iconId).toBeNull()
+  })
+
+  it('lets a player type a custom Topping name, clearing any preset selection', () => {
+    const state = initialBuildFlowState()
+
+    const updated = buildFlowReducer(state, { type: 'SET_TOPPING_CUSTOM_NAME', name: 'Maple Glaze' })
+
+    expect(updated.topping.customName).toBe('Maple Glaze')
+    expect(updated.topping.iconId).toBeNull()
+  })
+
   it('fills Mix-in slots in the order they are added', () => {
     let state = initialBuildFlowState()
     state = buildFlowReducer(state, { type: 'ADD_MIX_IN_PRESET', iconId: 'chocolate-chips' })
@@ -60,6 +97,27 @@ describe('buildFlowReducer', () => {
     expect(state.mixIns[1].iconId).toBe('chocolate-chips')
   })
 
+  it('fills the next Mix-in slot with a custom name, same as a preset click', () => {
+    let state = initialBuildFlowState()
+    state = buildFlowReducer(state, { type: 'ADD_MIX_IN_PRESET', iconId: 'chocolate-chips' })
+
+    state = buildFlowReducer(state, { type: 'ADD_MIX_IN_CUSTOM_NAME', name: 'Mango' })
+
+    expect(state.mixIns).toHaveLength(2)
+    expect(state.mixIns[1]).toMatchObject({ iconId: null, customName: 'Mango', pattern: 'flecks' })
+  })
+
+  it('treats adding a custom Mix-in as a no-op once 4 slots are filled', () => {
+    let state = initialBuildFlowState()
+    for (let i = 0; i < 4; i++) {
+      state = buildFlowReducer(state, { type: 'ADD_MIX_IN_PRESET', iconId: 'chocolate-chips' })
+    }
+
+    state = buildFlowReducer(state, { type: 'ADD_MIX_IN_CUSTOM_NAME', name: 'Mango' })
+
+    expect(state.mixIns).toHaveLength(4)
+  })
+
   it('treats adding a 5th Mix-in as a no-op once 4 slots are filled', () => {
     let state = initialBuildFlowState()
     for (let i = 0; i < 5; i++) {
@@ -67,6 +125,31 @@ describe('buildFlowReducer', () => {
     }
 
     expect(state.mixIns).toHaveLength(4)
+  })
+
+  it('sets the Base color without touching its iconId/customName', () => {
+    const state = initialBuildFlowState()
+
+    const updated = buildFlowReducer(state, { type: 'SET_BASE_COLOR', color: '#abcabc' })
+
+    expect(updated.base).toEqual({ ...state.base, color: '#abcabc' })
+  })
+
+  it('sets the Topping color without touching its iconId/customName', () => {
+    const state = initialBuildFlowState()
+
+    const updated = buildFlowReducer(state, { type: 'SET_TOPPING_COLOR', color: '#abcabc' })
+
+    expect(updated.topping).toEqual({ ...state.topping, color: '#abcabc' })
+  })
+
+  it('sets a Mix-in slot\'s render Pattern', () => {
+    let state = initialBuildFlowState()
+    state = buildFlowReducer(state, { type: 'ADD_MIX_IN_PRESET', iconId: 'chocolate-chips' })
+
+    state = buildFlowReducer(state, { type: 'SET_MIX_IN_PATTERN', index: 0, pattern: 'swirl' })
+
+    expect(state.mixIns[0].pattern).toBe('swirl')
   })
 
   it('removes a Mix-in slot and shifts the remaining ones down', () => {
@@ -80,6 +163,14 @@ describe('buildFlowReducer', () => {
 
     expect(state.mixIns).toHaveLength(1)
     expect(state.mixIns[0].color).toBe('#second')
+  })
+
+  it('sets the optional email', () => {
+    const state = initialBuildFlowState()
+
+    const updated = buildFlowReducer(state, { type: 'SET_EMAIL', email: 'player@example.com' })
+
+    expect(updated.email).toBe('player@example.com')
   })
 
   it('truncates the name to 50 characters', () => {
