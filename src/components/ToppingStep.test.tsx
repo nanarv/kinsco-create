@@ -20,10 +20,25 @@ describe('ToppingStep', () => {
     expect(dispatch).toHaveBeenCalledWith({ type: 'SELECT_TOPPING_PRESET', iconId: 'drizzle' })
   })
 
+  it('does not show the custom topping name field until Custom is clicked', () => {
+    render(<ToppingStep state={onToppingStep()} dispatch={vi.fn()} />)
+
+    expect(screen.queryByLabelText('Custom topping name')).not.toBeInTheDocument()
+  })
+
+  it('shows the custom topping name field after Custom is clicked', () => {
+    render(<ToppingStep state={onToppingStep()} dispatch={vi.fn()} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Custom' }))
+
+    expect(screen.getByLabelText('Custom topping name')).toBeInTheDocument()
+  })
+
   it('dispatches SET_TOPPING_CUSTOM_NAME when a custom name is typed', () => {
     const dispatch = vi.fn()
     render(<ToppingStep state={onToppingStep()} dispatch={dispatch} />)
 
+    fireEvent.click(screen.getByRole('button', { name: 'Custom' }))
     fireEvent.change(screen.getByLabelText('Custom topping name'), { target: { value: 'Maple Glaze' } })
 
     expect(dispatch).toHaveBeenCalledWith({ type: 'SET_TOPPING_CUSTOM_NAME', name: 'Maple Glaze' })

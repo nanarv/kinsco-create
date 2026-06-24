@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { BuildFlowAction, BuildFlowState } from '../buildFlowReducer'
 import { colorSwatches } from '../colorSwatches'
 import { iconCatalog } from '../iconCatalog'
@@ -10,6 +11,7 @@ export function BaseStep({
   dispatch: (action: BuildFlowAction) => void
 }) {
   const presets = iconCatalog.filter((entry) => entry.category === 'base')
+  const [showCustom, setShowCustom] = useState(state.base.customName !== null)
 
   return (
     <div>
@@ -24,12 +26,19 @@ export function BaseStep({
           {preset.label}
         </button>
       ))}
-      <label htmlFor="custom-base-name">Custom base name</label>
-      <input
-        id="custom-base-name"
-        value={state.base.customName ?? ''}
-        onChange={(event) => dispatch({ type: 'SET_BASE_CUSTOM_NAME', name: event.target.value })}
-      />
+      <button type="button" aria-pressed={showCustom} onClick={() => setShowCustom(true)}>
+        Custom
+      </button>
+      {showCustom && (
+        <>
+          <label htmlFor="custom-base-name">Custom base name</label>
+          <input
+            id="custom-base-name"
+            value={state.base.customName ?? ''}
+            onChange={(event) => dispatch({ type: 'SET_BASE_CUSTOM_NAME', name: event.target.value })}
+          />
+        </>
+      )}
       <div>
         {colorSwatches.map((color) => (
           <button

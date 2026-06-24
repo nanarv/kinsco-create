@@ -47,10 +47,25 @@ describe('MixInsStep', () => {
     expect(dispatch).toHaveBeenCalledWith({ type: 'REMOVE_MIX_IN', index: 0 })
   })
 
+  it('does not show the custom mix-in name field until Custom is clicked', () => {
+    render(<MixInsStep state={onMixInsStep()} dispatch={vi.fn()} />)
+
+    expect(screen.queryByLabelText('Custom mix-in name')).not.toBeInTheDocument()
+  })
+
+  it('shows the custom mix-in name field after Custom is clicked', () => {
+    render(<MixInsStep state={onMixInsStep()} dispatch={vi.fn()} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Custom' }))
+
+    expect(screen.getByLabelText('Custom mix-in name')).toBeInTheDocument()
+  })
+
   it('dispatches ADD_MIX_IN_CUSTOM_NAME when a custom Mix-in name is typed', () => {
     const dispatch = vi.fn()
     render(<MixInsStep state={onMixInsStep()} dispatch={dispatch} />)
 
+    fireEvent.click(screen.getByRole('button', { name: 'Custom' }))
     fireEvent.change(screen.getByLabelText('Custom mix-in name'), { target: { value: 'Mango' } })
 
     expect(dispatch).toHaveBeenCalledWith({ type: 'ADD_MIX_IN_CUSTOM_NAME', name: 'Mango' })

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { BuildFlowAction, BuildFlowState } from '../buildFlowReducer'
 import { colorSwatches } from '../colorSwatches'
 import { iconCatalog } from '../iconCatalog'
@@ -10,6 +11,7 @@ export function ToppingStep({
   dispatch: (action: BuildFlowAction) => void
 }) {
   const presets = iconCatalog.filter((entry) => entry.category === 'topping')
+  const [showCustom, setShowCustom] = useState(state.topping.customName !== null)
 
   return (
     <div>
@@ -24,12 +26,19 @@ export function ToppingStep({
           {preset.label}
         </button>
       ))}
-      <label htmlFor="custom-topping-name">Custom topping name</label>
-      <input
-        id="custom-topping-name"
-        value={state.topping.customName ?? ''}
-        onChange={(event) => dispatch({ type: 'SET_TOPPING_CUSTOM_NAME', name: event.target.value })}
-      />
+      <button type="button" aria-pressed={showCustom} onClick={() => setShowCustom(true)}>
+        Custom
+      </button>
+      {showCustom && (
+        <>
+          <label htmlFor="custom-topping-name">Custom topping name</label>
+          <input
+            id="custom-topping-name"
+            value={state.topping.customName ?? ''}
+            onChange={(event) => dispatch({ type: 'SET_TOPPING_CUSTOM_NAME', name: event.target.value })}
+          />
+        </>
+      )}
       <div>
         {colorSwatches.map((color) => (
           <button

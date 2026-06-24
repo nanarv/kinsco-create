@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { BuildFlowAction, BuildFlowState } from '../buildFlowReducer'
 import { colorSwatches } from '../colorSwatches'
 import { findIcon, iconCatalog } from '../iconCatalog'
@@ -13,6 +14,7 @@ export function MixInsStep({
 }) {
   const presets = iconCatalog.filter((entry) => entry.category === 'mixIn')
   const isFull = state.mixIns.length >= MAX_MIX_INS
+  const [showCustom, setShowCustom] = useState(false)
 
   return (
     <div>
@@ -28,12 +30,19 @@ export function MixInsStep({
           {preset.label}
         </button>
       ))}
-      <label htmlFor="custom-mix-in-name">Custom mix-in name</label>
-      <input
-        id="custom-mix-in-name"
-        disabled={isFull}
-        onChange={(event) => dispatch({ type: 'ADD_MIX_IN_CUSTOM_NAME', name: event.target.value })}
-      />
+      <button type="button" aria-pressed={showCustom} disabled={isFull} onClick={() => setShowCustom(true)}>
+        Custom
+      </button>
+      {showCustom && (
+        <>
+          <label htmlFor="custom-mix-in-name">Custom mix-in name</label>
+          <input
+            id="custom-mix-in-name"
+            disabled={isFull}
+            onChange={(event) => dispatch({ type: 'ADD_MIX_IN_CUSTOM_NAME', name: event.target.value })}
+          />
+        </>
+      )}
       <ul>
         {state.mixIns.map((mixIn, index) => {
           const entry = findIcon('mixIn', mixIn.iconId)
