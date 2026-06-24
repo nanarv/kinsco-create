@@ -1,20 +1,7 @@
-import { useState } from 'react'
-import { BuildFlow } from './components/BuildFlow'
-
-type Screen = 'build' | 'gallery'
+import { AppShell } from './components/AppShell'
 
 function App() {
-  const [screen, setScreen] = useState<Screen>('build')
-
-  if (screen === 'gallery') {
-    return (
-      <main>
-        <h1>Gallery</h1>
-      </main>
-    )
-  }
-
-  return <BuildFlow onSubmitted={() => setScreen('gallery')} />
+  return <AppShell />
 }
 
 export default App

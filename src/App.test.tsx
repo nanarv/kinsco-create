@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { submitCookie } from './lib/cookieRepository'
+import { fetchCookies, submitCookie } from './lib/cookieRepository'
 import App from './App'
 
-vi.mock('./lib/cookieRepository', () => ({ submitCookie: vi.fn() }))
+vi.mock('./lib/cookieRepository', () => ({ submitCookie: vi.fn(), fetchCookies: vi.fn() }))
 vi.mock('./lib/emailSignupRepository', () => ({ submitEmailSignup: vi.fn() }))
 
 describe('App', () => {
@@ -13,8 +13,9 @@ describe('App', () => {
     expect(screen.getByText('Choose your Base')).toBeInTheDocument()
   })
 
-  it('switches to the Gallery placeholder once a Cookie is submitted', async () => {
+  it('switches to the Gallery once a Cookie is submitted', async () => {
     vi.mocked(submitCookie).mockResolvedValue(undefined)
+    vi.mocked(fetchCookies).mockResolvedValue([])
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: 'Next' })) // mixIns
     fireEvent.click(screen.getByRole('button', { name: 'Next' })) // topping
@@ -24,6 +25,6 @@ describe('App', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
 
-    expect(await screen.findByText('Gallery')).toBeInTheDocument()
+    expect(await screen.findByText(/no cookies/i)).toBeInTheDocument()
   })
 })
